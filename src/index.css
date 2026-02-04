@@ -2,95 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* 
+ * SUSE - Sistema Unificado de Suporte Estratégico
+ * Design System - Professional Trading Platform
+ * 
+ * Color Philosophy:
+ * - Dark, sophisticated palette for extended screen time
+ * - High contrast for critical information
+ * - Semantic colors for trading decisions (BUY/SELL/HOLD)
+ * - Subtle gradients for depth and hierarchy
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base Dark Theme - Inspired by Bloomberg Terminal */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card surfaces with subtle elevation */
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 96%;
+    --card-elevated: 222 47% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Popover/Dialog surfaces */
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 40% 96%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Cyan/Teal for brand identity */
+    --primary: 187 92% 50%;
+    --primary-foreground: 222 47% 6%;
+    --primary-glow: 187 92% 60%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Subtle contrast */
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 40% 85%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted elements */
+    --muted: 222 30% 12%;
+    --muted-foreground: 215 20% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - For highlights */
+    --accent: 222 30% 16%;
+    --accent-foreground: 210 40% 96%;
 
-    --destructive: 0 84.2% 60.2%;
+    /* Trading Decision Colors - CRITICAL SEMANTIC TOKENS */
+    /* BUY - Emerald Green - Represents opportunity */
+    --signal-buy: 152 69% 45%;
+    --signal-buy-foreground: 152 69% 95%;
+    --signal-buy-glow: 152 69% 55%;
+    --signal-buy-muted: 152 40% 20%;
+
+    /* SELL - Coral Red - Represents caution */
+    --signal-sell: 0 72% 55%;
+    --signal-sell-foreground: 0 72% 95%;
+    --signal-sell-glow: 0 72% 65%;
+    --signal-sell-muted: 0 40% 20%;
+
+    /* HOLD - Slate Gray - Represents neutrality */
+    --signal-hold: 220 15% 50%;
+    --signal-hold-foreground: 220 15% 95%;
+    --signal-hold-glow: 220 15% 60%;
+    --signal-hold-muted: 220 15% 20%;
+
+    /* Confidence levels */
+    --confidence-high: 152 69% 45%;
+    --confidence-medium: 45 93% 55%;
+    --confidence-low: 0 72% 55%;
+
+    /* Indicator colors */
+    --indicator-bullish: 152 69% 45%;
+    --indicator-bearish: 0 72% 55%;
+    --indicator-neutral: 220 15% 50%;
+
+    /* Chart colors */
+    --chart-line: 187 92% 50%;
+    --chart-grid: 222 30% 15%;
+    --chart-candle-up: 152 69% 45%;
+    --chart-candle-down: 0 72% 55%;
+
+    /* Destructive */
+    --destructive: 0 72% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders and inputs */
+    --border: 222 30% 18%;
+    --input: 222 30% 12%;
+    --ring: 187 92% 50%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Sidebar - consistent with dark theme */
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 210 40% 85%;
+    --sidebar-primary: 187 92% 50%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 222 30% 15%;
+    --sidebar-ring: 187 92% 50%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(187 92% 50%), hsl(200 92% 45%));
+    --gradient-buy: linear-gradient(135deg, hsl(152 69% 45%), hsl(152 69% 35%));
+    --gradient-sell: linear-gradient(135deg, hsl(0 72% 55%), hsl(0 72% 45%));
+    --gradient-hold: linear-gradient(135deg, hsl(220 15% 50%), hsl(220 15% 40%));
+    --gradient-card: linear-gradient(180deg, hsl(222 47% 10%), hsl(222 47% 8%));
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Shadows */
+    --shadow-glow-primary: 0 0 20px hsl(187 92% 50% / 0.3);
+    --shadow-glow-buy: 0 0 30px hsl(152 69% 45% / 0.4);
+    --shadow-glow-sell: 0 0 30px hsl(0 72% 55% / 0.4);
+    --shadow-glow-hold: 0 0 20px hsl(220 15% 50% / 0.3);
+    --shadow-card: 0 4px 20px hsl(222 47% 4% / 0.5);
   }
 }
 
@@ -100,6 +125,79 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Monospace for numbers and data */
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  /* Decision signal cards */
+  .signal-buy {
+    @apply bg-signal-buy-muted text-signal-buy-foreground border-signal-buy/30;
+    box-shadow: var(--shadow-glow-buy);
+  }
+
+  .signal-sell {
+    @apply bg-signal-sell-muted text-signal-sell-foreground border-signal-sell/30;
+    box-shadow: var(--shadow-glow-sell);
+  }
+
+  .signal-hold {
+    @apply bg-signal-hold-muted text-signal-hold-foreground border-signal-hold/30;
+    box-shadow: var(--shadow-glow-hold);
+  }
+
+  /* Glassmorphism panels */
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-lg;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Animated pulse for active signals */
+  .pulse-buy {
+    animation: pulse-buy 2s ease-in-out infinite;
+  }
+
+  .pulse-sell {
+    animation: pulse-sell 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-buy {
+    0%, 100% { box-shadow: 0 0 20px hsl(152 69% 45% / 0.3); }
+    50% { box-shadow: 0 0 40px hsl(152 69% 45% / 0.5); }
+  }
+
+  @keyframes pulse-sell {
+    0%, 100% { box-shadow: 0 0 20px hsl(0 72% 55% / 0.3); }
+    50% { box-shadow: 0 0 40px hsl(0 72% 55% / 0.5); }
+  }
+
+  /* Confidence bar animation */
+  .confidence-bar {
+    @apply h-2 rounded-full transition-all duration-500 ease-out;
+    background: var(--gradient-primary);
+  }
+
+  /* Data grid styling */
+  .data-cell {
+    @apply font-mono text-sm tabular-nums;
+  }
+
+  /* Indicator badges */
+  .indicator-bullish {
+    @apply text-indicator-bullish;
+  }
+
+  .indicator-bearish {
+    @apply text-indicator-bearish;
+  }
+
+  .indicator-neutral {
+    @apply text-indicator-neutral;
   }
 }
