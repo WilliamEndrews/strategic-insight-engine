@@ -26,6 +26,7 @@ import { AlertsPanel } from '@/components/suse/AlertsPanel';
 import { AssetSelector } from '@/components/suse/AssetSelector';
 import { DecisionHistory } from '@/components/suse/DecisionHistory';
 import { PaperTradingPanel } from '@/components/suse/PaperTradingPanel';
+import { CollapsiblePanel } from '@/components/suse/CollapsiblePanel';
 import {
   mockAnalysisResult,
   mockBuyDecision,
@@ -224,45 +225,67 @@ const Index = () => {
                 estimatedDuration={analysisData.aiDecision.estimated_duration}
               />
 
-              <ExplanationPanel
-                explanations={analysisData.aiDecision.explanations}
-                warnings={analysisData.aiDecision.warnings}
-              />
+              <CollapsiblePanel title="Explicação da IA">
+                <ExplanationPanel
+                  explanations={analysisData.aiDecision.explanations}
+                  warnings={analysisData.aiDecision.warnings}
+                />
+              </CollapsiblePanel>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <BacktestPanel />
-                <ReplayPanel />
+                <CollapsiblePanel title="Backtest">
+                  <BacktestPanel />
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Replay">
+                  <ReplayPanel />
+                </CollapsiblePanel>
               </div>
 
-              <RiskPanel />
+              <CollapsiblePanel title="Gestão de Risco">
+                <RiskPanel />
+              </CollapsiblePanel>
 
-              <PaperTradingPanel
-                currentPrice={analysisData.marketData?.ohlc?.close || 0}
-                currentDecision={analysisData.aiDecision.decision}
-                currentConfidence={analysisData.aiDecision.confidence}
-              />
+              <CollapsiblePanel title="Paper Trading">
+                <PaperTradingPanel
+                  currentPrice={analysisData.marketData?.ohlc?.close || 0}
+                  currentDecision={analysisData.aiDecision.decision}
+                  currentConfidence={analysisData.aiDecision.confidence}
+                />
+              </CollapsiblePanel>
             </div>
 
             {/* Barra lateral */}
             <div className="space-y-6">
-              <ConfidenceMeter 
-                probabilities={analysisData.aiDecision.probabilities} 
-                confidence={analysisData.aiDecision.confidence} 
-              />
+              <CollapsiblePanel title="Confiança">
+                <ConfidenceMeter
+                  probabilities={analysisData.aiDecision.probabilities}
+                  confidence={analysisData.aiDecision.confidence}
+                />
+              </CollapsiblePanel>
 
-              <ShapPanel shapValues={analysisData.aiDecision.shap_values} />
+              <CollapsiblePanel title="SHAP">
+                <ShapPanel shapValues={analysisData.aiDecision.shap_values} />
+              </CollapsiblePanel>
 
-              <AlertsPanel />
+              <CollapsiblePanel title="Alertas">
+                <AlertsPanel />
+              </CollapsiblePanel>
 
-              <DecisionHistory />
+              <CollapsiblePanel title="Histórico">
+                <DecisionHistory />
+              </CollapsiblePanel>
 
-              <IndicatorPanel analysis={analysisData.technicalAnalysis} />
+              <CollapsiblePanel title="Indicadores">
+                <IndicatorPanel analysis={analysisData.technicalAnalysis} />
+              </CollapsiblePanel>
             </div>
           </div>
 
           {/* Multi-ativos */}
           <div className="mt-8">
-            <AssetSelector />
+            <CollapsiblePanel title="Multi-Ativos">
+              <AssetSelector />
+            </CollapsiblePanel>
           </div>
 
           {/* Rodapé */}
