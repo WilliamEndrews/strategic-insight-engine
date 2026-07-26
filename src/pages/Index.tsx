@@ -28,6 +28,10 @@ import { DecisionHistory } from '@/components/suse/DecisionHistory';
 import { PaperTradingPanel } from '@/components/suse/PaperTradingPanel';
 import { CollapsiblePanel } from '@/components/suse/CollapsiblePanel';
 import {
+  Info, History, PlayCircle, Shield, Wallet, Gauge, BrainCircuit,
+  Bell, Activity, LayoutGrid,
+} from 'lucide-react';
+import {
   mockAnalysisResult,
   mockBuyDecision,
   mockSellDecision,
@@ -225,7 +229,7 @@ const Index = () => {
                 estimatedDuration={analysisData.aiDecision.estimated_duration}
               />
 
-              <CollapsiblePanel title="Explicação da IA">
+              <CollapsiblePanel title="Análise da Decisão" icon={Info} description="Raciocínio por trás da decisão">
                 <ExplanationPanel
                   explanations={analysisData.aiDecision.explanations}
                   warnings={analysisData.aiDecision.warnings}
@@ -233,19 +237,19 @@ const Index = () => {
               </CollapsiblePanel>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <CollapsiblePanel title="Backtest">
+                <CollapsiblePanel title="Backtesting" icon={History} description="Teste a IA em dados históricos">
                   <BacktestPanel />
                 </CollapsiblePanel>
-                <CollapsiblePanel title="Replay">
+                <CollapsiblePanel title="Replay de Mercado" icon={PlayCircle} description="Revise decisões passo-a-passo">
                   <ReplayPanel />
                 </CollapsiblePanel>
               </div>
 
-              <CollapsiblePanel title="Gestão de Risco">
+              <CollapsiblePanel title="Gestão de Risco" icon={Shield} description="Position sizing e R:R">
                 <RiskPanel />
               </CollapsiblePanel>
 
-              <CollapsiblePanel title="Paper Trading">
+              <CollapsiblePanel title="Paper Trading" icon={Wallet} description="Conta virtual — sem risco real">
                 <PaperTradingPanel
                   currentPrice={analysisData.marketData?.ohlc?.close || 0}
                   currentDecision={analysisData.aiDecision.decision}
@@ -256,26 +260,26 @@ const Index = () => {
 
             {/* Barra lateral */}
             <div className="space-y-6">
-              <CollapsiblePanel title="Confiança">
+              <CollapsiblePanel title="Distribuição de Probabilidades" icon={Gauge} description="Nível de confiança da IA">
                 <ConfidenceMeter
                   probabilities={analysisData.aiDecision.probabilities}
                   confidence={analysisData.aiDecision.confidence}
                 />
               </CollapsiblePanel>
 
-              <CollapsiblePanel title="SHAP">
+              <CollapsiblePanel title="Explicabilidade (SHAP)" icon={BrainCircuit} description="Features que influenciaram a IA">
                 <ShapPanel shapValues={analysisData.aiDecision.shap_values} />
               </CollapsiblePanel>
 
-              <CollapsiblePanel title="Alertas">
+              <CollapsiblePanel title="Alertas" icon={Bell} description="Notificações automáticas">
                 <AlertsPanel />
               </CollapsiblePanel>
 
-              <CollapsiblePanel title="Histórico">
+              <CollapsiblePanel title="Histórico de Decisões" icon={History} description="Registro de decisões">
                 <DecisionHistory />
               </CollapsiblePanel>
 
-              <CollapsiblePanel title="Indicadores">
+              <CollapsiblePanel title="Indicadores Técnicos" icon={Activity} description="Visão técnica do mercado">
                 <IndicatorPanel analysis={analysisData.technicalAnalysis} />
               </CollapsiblePanel>
             </div>
@@ -283,7 +287,7 @@ const Index = () => {
 
           {/* Multi-ativos */}
           <div className="mt-8">
-            <CollapsiblePanel title="Multi-Ativos">
+            <CollapsiblePanel title="Multi-Ativos" icon={LayoutGrid} description="Visão geral por ativo">
               <AssetSelector />
             </CollapsiblePanel>
           </div>

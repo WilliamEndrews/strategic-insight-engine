@@ -7,12 +7,14 @@
  */
 
 import { useState } from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CollapsiblePanelProps {
   title: string;
   children: React.ReactNode;
+  icon?: LucideIcon;
+  description?: React.ReactNode;
   className?: string;
   defaultExpanded?: boolean;
 }
@@ -20,6 +22,8 @@ interface CollapsiblePanelProps {
 export function CollapsiblePanel({
   title,
   children,
+  icon: Icon,
+  description,
   className,
   defaultExpanded = true,
 }: CollapsiblePanelProps) {
@@ -33,10 +37,22 @@ export function CollapsiblePanel({
           className
         )}
       >
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <div className="flex items-center gap-3 min-w-0">
+          {Icon && (
+            <div className="p-1.5 rounded-lg bg-primary/10 flex-shrink-0">
+              <Icon className="w-5 h-5 text-primary" />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-foreground truncate">{title}</h3>
+            {description && (
+              <p className="text-xs text-muted-foreground truncate">{description}</p>
+            )}
+          </div>
+        </div>
         <button
           onClick={() => setExpanded(true)}
-          className="p-1 rounded-md hover:bg-secondary/80 transition text-muted-foreground hover:text-foreground"
+          className="p-1 rounded-md hover:bg-secondary/80 transition text-muted-foreground hover:text-foreground flex-shrink-0 ml-2"
           title="Expandir"
         >
           <Plus className="w-4 h-4" />
