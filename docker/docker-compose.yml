@@ -1,0 +1,83 @@
+# SUSE - Docker Compose
+# Fase 5: Orquestração de 3 serviços
+#
+# Uso:
+#   docker-compose up -d          # Iniciar todos
+#   docker-compose logs -f        # Ver logs
+#   docker-compose down           # Parar
+#   docker-compose build          # Rebuild
+
+version: '3.8'
+
+services:
+  # IA Engine - Python/Flask (porta 5000)
+  ia-engine:
+    build:
+      context: ..
+      dockerfile: docker/ia-engine.Dockerfile
+    container_name: suse-ia
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../suse-ia/dataset:/app/dataset
+      - ../suse-ia/model_rf_real.pkl:/app/model_rf_real.pkl:ro
+      - ../suse-ia/model_metadata.pkl:/app/model_metadata.pkl:ro
+      - suse-ia-logs:/app/logs
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/ia', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - suse-net
+
+  # Backend - Node.js/Express (porta 4000)
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend.Dockerfile
+    container_name: suse-backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      ia-engine:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - IA_HOST=ia-engine
+      - IA_PORT=5000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http = require('http'); const r = http.get('http://localhost:4000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }); r.on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - suse-net
+
+  # Frontend - React/Vite build com nginx (porta 80)
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+    container_name: suse-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - suse-net
+
+volumes:
+  suse-ia-logs:
+
+networks:
+  suse-net:
+    driver: bridge

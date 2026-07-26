@@ -1,0 +1,45 @@
+# SUSE - .dockerignore
+# Reduz contexto de build do Docker
+
+# Dependências
+node_modules/
+backend/node_modules/
+venv/
+__pycache__/
+
+# Builds
+dist/
+backend/dist/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Docker
+docker/
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.cache
+
+# Documentação (não precisa no container)
+*.md
+SUSE_RUN.md
+
+# Scripts batch (Windows apenas)
+*.bat
+
+# Ambiente
+.env
+.env.local
