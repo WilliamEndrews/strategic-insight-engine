@@ -13,6 +13,9 @@
  */
 
 import { useState, useEffect, Component, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useDashboardConfig } from '@/hooks/useDashboardConfig';
 import { MarketHeader } from '@/components/suse/MarketHeader';
 import { DecisionCard } from '@/components/suse/DecisionCard';
 import { ExplanationPanel } from '@/components/suse/ExplanationPanel';
@@ -32,13 +35,9 @@ import {
   Bell, Activity, LayoutGrid,
 } from 'lucide-react';
 import {
-  mockAnalysisResult,
-  mockBuyDecision,
-  mockSellDecision,
-  mockHoldDecision,
   mockCandles,
 } from '@/lib/mockData';
-import type { AIDecision, AnalysisResult } from '@/types/trading';
+import type { AnalysisResult } from '@/types/trading';
 
 // Error Boundary simples
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -72,6 +71,9 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 }
 
 const Index = () => {
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+  const config = useDashboardConfig();
   const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,19 +115,6 @@ const Index = () => {
   useEffect(() => {
     fetchAnalysis();
   }, []);
-
-  /**
-   * Função para trocar manualmente a decisão (útil para testes)
-   */
-  const handleDecisionSwitch = (decision: AIDecision) => {
-    setAnalysisData((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        aiDecision: decision,
-      };
-    });
-  };
 
   // Loading
   if (isLoading) {
@@ -178,36 +167,26 @@ const Index = () => {
         />
 
         <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          {/* Barra de status e testes */}
+          {/* Barra de status e perfil */}
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-medium animate-pulse">
-                MODO DESENVOLVIMENTO
+              <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-medium">
+                {profile?.trading_style || '—'} • {profile?.experience_level || '—'}
               </span>
-              <span className="text-sm text-muted-foreground">
-                Conectado ao backend (localhost:4000) • 120 candles
-              </span>
+              {config.defaultTimeframe && (
+                <span className="text-sm text-muted-foreground">
+                  Timeframe padrão: <span className="font-mono text-foreground">{config.defaultTimeframe}</span>
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm text-muted-foreground">Testar sinal manual:</span>
+              <span className="text-sm text-muted-foreground">Olá, {profile?.full_name || user?.email}</span>
               <button
-                onClick={() => handleDecisionSwitch(mockBuyDecision)}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-green-500/20 text-green-700 hover:bg-green-500/30 transition"
+                onClick={async () => { await signOut(); navigate('/login'); }}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground transition"
               >
-                BUY
-              </button>
-              <button
-                onClick={() => handleDecisionSwitch(mockSellDecision)}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500/20 text-red-700 hover:bg-red-500/30 transition"
-              >
-                SELL
-              </button>
-              <button
-                onClick={() => handleDecisionSwitch(mockHoldDecision)}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/20 text-yellow-700 hover:bg-yellow-500/30 transition"
-              >
-                HOLD
+                Sair
               </button>
               <button
                 onClick={fetchAnalysis}
@@ -236,61 +215,82 @@ const Index = () => {
                 />
               </CollapsiblePanel>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <CollapsiblePanel title="Backtesting" icon={History} description="Teste a IA em dados históricos">
-                  <BacktestPanel />
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Replay de Mercado" icon={PlayCircle} description="Revise decisões passo-a-passo">
-                  <ReplayPanel />
-                </CollapsiblePanel>
-              </div>
+              {(config.showBacktest || config.showReplay) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {config.showBacktest && (
+                    <CollapsiblePanel title="Backtesting" icon={History} description="Teste a IA em dados históricos">
+                      <BacktestPanel />
+                    </CollapsiblePanel>
+                  )}
+                  {config.showReplay && (
+                    <CollapsiblePanel title="Replay de Mercado" icon={PlayCircle} description="Revise decisões passo-a-passo">
+                      <ReplayPanel />
+                    </CollapsiblePanel>
+                  )}
+                </div>
+              )}
 
-              <CollapsiblePanel title="Gestão de Risco" icon={Shield} description="Position sizing e R:R">
-                <RiskPanel />
-              </CollapsiblePanel>
+              {config.showRisk && (
+                <CollapsiblePanel title="Gestão de Risco" icon={Shield} description="Position sizing e R:R">
+                  <RiskPanel />
+                </CollapsiblePanel>
+              )}
 
-              <CollapsiblePanel title="Paper Trading" icon={Wallet} description="Conta virtual — sem risco real">
-                <PaperTradingPanel
-                  currentPrice={analysisData.marketData?.ohlc?.close || 0}
-                  currentDecision={analysisData.aiDecision.decision}
-                  currentConfidence={analysisData.aiDecision.confidence}
-                />
-              </CollapsiblePanel>
+              {config.showPaperTrading && (
+                <CollapsiblePanel title="Paper Trading" icon={Wallet} description="Conta virtual — sem risco real">
+                  <PaperTradingPanel
+                    currentPrice={analysisData.marketData?.ohlc?.close || 0}
+                    currentDecision={analysisData.aiDecision.decision}
+                    currentConfidence={analysisData.aiDecision.confidence}
+                  />
+                </CollapsiblePanel>
+              )}
             </div>
 
             {/* Barra lateral */}
             <div className="space-y-6">
-              <CollapsiblePanel title="Distribuição de Probabilidades" icon={Gauge} description="Nível de confiança da IA">
-                <ConfidenceMeter
-                  probabilities={analysisData.aiDecision.probabilities}
-                  confidence={analysisData.aiDecision.confidence}
-                />
-              </CollapsiblePanel>
+              {config.showConfidence && (
+                <CollapsiblePanel title="Distribuição de Probabilidades" icon={Gauge} description="Nível de confiança da IA">
+                  <ConfidenceMeter
+                    probabilities={analysisData.aiDecision.probabilities}
+                    confidence={analysisData.aiDecision.confidence}
+                  />
+                </CollapsiblePanel>
+              )}
 
-              <CollapsiblePanel title="Explicabilidade (SHAP)" icon={BrainCircuit} description="Features que influenciaram a IA">
-                <ShapPanel shapValues={analysisData.aiDecision.shap_values} />
-              </CollapsiblePanel>
+              {config.showShap && (
+                <CollapsiblePanel title="Explicabilidade (SHAP)" icon={BrainCircuit} description="Features que influenciaram a IA">
+                  <ShapPanel shapValues={analysisData.aiDecision.shap_values} />
+                </CollapsiblePanel>
+              )}
 
-              <CollapsiblePanel title="Alertas" icon={Bell} description="Notificações automáticas">
-                <AlertsPanel />
-              </CollapsiblePanel>
+              {config.showAlerts && (
+                <CollapsiblePanel title="Alertas" icon={Bell} description="Notificações automáticas">
+                  <AlertsPanel />
+                </CollapsiblePanel>
+              )}
 
-              <CollapsiblePanel title="Histórico de Decisões" icon={History} description="Registro de decisões">
-                <DecisionHistory />
-              </CollapsiblePanel>
+              {config.showHistory && (
+                <CollapsiblePanel title="Histórico de Decisões" icon={History} description="Registro de decisões">
+                  <DecisionHistory />
+                </CollapsiblePanel>
+              )}
 
-              <CollapsiblePanel title="Indicadores Técnicos" icon={Activity} description="Visão técnica do mercado">
-                <IndicatorPanel analysis={analysisData.technicalAnalysis} />
-              </CollapsiblePanel>
+              {config.showIndicators && (
+                <CollapsiblePanel title="Indicadores Técnicos" icon={Activity} description="Visão técnica do mercado">
+                  <IndicatorPanel analysis={analysisData.technicalAnalysis} />
+                </CollapsiblePanel>
+              )}
             </div>
           </div>
 
-          {/* Multi-ativos */}
-          <div className="mt-8">
-            <CollapsiblePanel title="Multi-Ativos" icon={LayoutGrid} description="Visão geral por ativo">
-              <AssetSelector />
-            </CollapsiblePanel>
-          </div>
+          {config.showMultiAssets && (
+            <div className="mt-8">
+              <CollapsiblePanel title="Multi-Ativos" icon={LayoutGrid} description="Visão geral por ativo">
+                <AssetSelector />
+              </CollapsiblePanel>
+            </div>
+          )}
 
           {/* Rodapé */}
           <div className="mt-8">

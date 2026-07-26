@@ -34,7 +34,16 @@ git_check.bat
 git_commit.bat
 git_output.txt
 commit_msg.txt
+commit_msg2.txt
+commit_final.txt
+commit_min.txt
+commit_min2.txt
 test_write.txt
+
+# Environment variables
+.env
+.env.local
+.env.*.local
 
 # SUSE runtime data
 suse-ia/dataset/
