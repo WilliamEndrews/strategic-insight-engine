@@ -31,5 +31,11 @@ __pycache__/
 
 # SUSE temp files
 git_check.bat
+git_commit.bat
 git_output.txt
+commit_msg.txt
 test_write.txt
+
+# SUSE runtime data
+suse-ia/dataset/
+suse-ia/old/
