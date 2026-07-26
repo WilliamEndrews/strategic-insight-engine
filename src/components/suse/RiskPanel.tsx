@@ -45,8 +45,8 @@ export function RiskPanel({ className }: RiskPanelProps) {
       const data: RiskAssessment = await resp.json();
       if (data.error) throw new Error(data.error);
       setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao avaliar risco');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao avaliar risco');
     } finally {
       setLoading(false);
     }

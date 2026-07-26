@@ -32,8 +32,8 @@ export function DecisionHistory({ className }: DecisionHistoryProps) {
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const result: DecisionHistoryResult = await resp.json();
       setData(result);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao buscar histórico');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao buscar histórico');
     } finally {
       setLoading(false);
     }

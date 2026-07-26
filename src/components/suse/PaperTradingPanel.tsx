@@ -40,8 +40,8 @@ export function PaperTradingPanel({ className, currentPrice = 0, currentDecision
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const result: PaperTradeResult = await resp.json();
       if (result.account) setAccount(result.account);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
     }
   }, [currentPrice]);
 
@@ -75,8 +75,8 @@ export function PaperTradingPanel({ className, currentPrice = 0, currentDecision
       if (!result.success) throw new Error(result.message);
       setAccount(result.account);
       setShowOpenForm(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setLoading(false);
     }
@@ -93,8 +93,8 @@ export function PaperTradingPanel({ className, currentPrice = 0, currentDecision
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const result: PaperTradeResult = await resp.json();
       if (result.account) setAccount(result.account);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setLoading(false);
     }
@@ -110,8 +110,8 @@ export function PaperTradingPanel({ className, currentPrice = 0, currentDecision
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const result: PaperTradeResult = await resp.json();
       if (result.account) setAccount(result.account);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
     }
   };
 

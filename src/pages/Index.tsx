@@ -96,9 +96,9 @@ const Index = () => {
       const data = await response.json();
       console.log('Análise recebida com sucesso:', data.aiDecision?.decision || 'N/A');
       setAnalysisData(data);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Erro ao buscar análise:', err);
-      setError(err.message || 'Erro ao conectar com o backend. Verifique se ele está rodando.');
+      setError(err instanceof Error ? err.message : 'Erro ao conectar com o backend. Verifique se ele está rodando.');
     } finally {
       setIsLoading(false);
     }

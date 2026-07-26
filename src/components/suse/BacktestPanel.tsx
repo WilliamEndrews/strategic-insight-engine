@@ -6,7 +6,8 @@
 import { useState, useCallback } from 'react';
 import {
   History, Play, Loader2, TrendingUp, TrendingDown,
-  Target, Activity, DollarSign, AlertTriangle, ChevronDown, ChevronRight
+  Target, Activity, DollarSign, AlertTriangle, ChevronDown, ChevronRight,
+  type LucideIcon
 } from 'lucide-react';
 import type { BacktestResult, BacktestSummary } from '@/types/trading';
 import { cn } from '@/lib/utils';
@@ -40,8 +41,8 @@ export function BacktestPanel({ className }: BacktestPanelProps) {
       const data: BacktestResult = await resp.json();
       if (data.error) throw new Error(data.error);
       setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao executar backtest');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao executar backtest');
     } finally {
       setLoading(false);
     }
@@ -50,7 +51,7 @@ export function BacktestPanel({ className }: BacktestPanelProps) {
   const s = result?.summary;
 
   const MetricCard = ({ icon: Icon, label, value, color }: {
-    icon: any; label: string; value: string; color: string;
+    icon: LucideIcon; label: string; value: string; color: string;
   }) => (
     <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50">
       <Icon className={cn('w-4 h-4', color)} />

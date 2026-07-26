@@ -70,8 +70,8 @@ export function AssetSelector({ className, currentSymbol = 'EURUSD', currentTime
       }
 
       setSummaries(results);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao escanear ativos');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao escanear ativos');
     } finally {
       setLoading(false);
     }

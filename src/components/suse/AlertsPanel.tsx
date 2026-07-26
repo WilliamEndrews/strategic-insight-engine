@@ -10,12 +10,13 @@ import {
 } from 'lucide-react';
 import type { AlertItem, AlertLevel } from '@/types/trading';
 import { cn } from '@/lib/utils';
+import type { LucideIcon } from 'lucide-react';
 
 interface AlertsPanelProps {
   className?: string;
 }
 
-const levelConfig: Record<AlertLevel, { icon: any; color: string; bg: string; label: string }> = {
+const levelConfig: Record<AlertLevel, { icon: LucideIcon; color: string; bg: string; label: string }> = {
   INFO:     { icon: Info,        color: 'text-blue-600',    bg: 'bg-blue-500/10',    label: 'Info' },
   WARNING:  { icon: AlertTriangle, color: 'text-yellow-600', bg: 'bg-yellow-500/10', label: 'Aviso' },
   CRITICAL: { icon: XCircle,     color: 'text-red-600',    bg: 'bg-red-500/10',     label: 'Crítico' },
@@ -39,8 +40,8 @@ export function AlertsPanel({ className }: AlertsPanelProps) {
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
       setAlerts(data.alerts || []);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao buscar alertas');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao buscar alertas');
     } finally {
       setLoading(false);
     }

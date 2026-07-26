@@ -39,8 +39,8 @@ export function ReplayPanel({ className }: ReplayPanelProps) {
       if (data.error) throw new Error(data.error);
       setResult(data);
       setCurrentStep(0);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao carregar replay');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar replay');
     } finally {
       setLoading(false);
     }
