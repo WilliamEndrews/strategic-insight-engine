@@ -18,12 +18,16 @@ export default function Login() {
 
     try {
       if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
         if (error) throw error;
-        setError('Verifique seu e-mail para confirmar o cadastro.');
+        if (data.session) {
+          navigate('/');
+        } else {
+          setError('Verifique seu e-mail para confirmar o cadastro.');
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,

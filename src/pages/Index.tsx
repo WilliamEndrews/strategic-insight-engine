@@ -32,10 +32,11 @@ import { PaperTradingPanel } from '@/components/suse/PaperTradingPanel';
 import { CollapsiblePanel } from '@/components/suse/CollapsiblePanel';
 import {
   Info, History, PlayCircle, Shield, Wallet, Gauge, BrainCircuit,
-  Bell, Activity, LayoutGrid,
+  Bell, Activity, LayoutGrid, AlertTriangle,
 } from 'lucide-react';
 import {
   mockCandles,
+  mockAnalysisResult,
 } from '@/lib/mockData';
 import type { AnalysisResult } from '@/types/trading';
 
@@ -76,23 +77,29 @@ const Index = () => {
   const config = useDashboardConfig();
   const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [usingMockData, setUsingMockData] = useState(false);
 
   /**
    * Busca análise do backend usando a rota correta (/ia)
+   * Se o backend estiver offline, usa dados mock como fallback
    */
   async function fetchAnalysis() {
     try {
       console.log('Iniciando fetch para /ia (120 candles)');
       setIsLoading(true);
-      setError(null);
+      setUsingMockData(false);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const response = await fetch('http://localhost:4000/ia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ candles: mockCandles })
+        body: JSON.stringify({ candles: mockCandles }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
       console.log('Status recebido:', response.status);
 
       if (!response.ok) {
@@ -105,7 +112,9 @@ const Index = () => {
       setAnalysisData(data);
     } catch (err) {
       console.error('Erro ao buscar análise:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao conectar com o backend. Verifique se ele está rodando.');
+      console.warn('Backend offline — usando dados de demonstração');
+      setAnalysisData(mockAnalysisResult);
+      setUsingMockData(true);
     } finally {
       setIsLoading(false);
     }
@@ -124,24 +133,6 @@ const Index = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-muted-foreground">Carregando análise em tempo real...</p>
           <p className="text-sm text-muted-foreground mt-2">Conectando ao backend...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Erro
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center max-w-md p-8 border border-destructive/30 rounded-xl bg-destructive/5 shadow-lg">
-          <h2 className="text-2xl font-bold text-destructive mb-4">Erro ao carregar análise</h2>
-          <p className="text-muted-foreground mb-6">{error}</p>
-          <button
-            onClick={fetchAnalysis}
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition font-medium shadow-md"
-          >
-            Tentar novamente
-          </button>
         </div>
       </div>
     );
@@ -202,6 +193,23 @@ const Index = () => {
               </button>
             </div>
           </div>
+
+          {/* Banner modo demonstração */}
+          {usingMockData && (
+            <div className="mb-6 flex items-center gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 text-sm">
+              <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0" />
+              <span className="text-yellow-700 dark:text-yellow-400">
+                <strong>Modo demonstração</strong> — Backend offline. Exibindo dados simulados.
+                Inicie o backend em <span className="font-mono">localhost:4000</span> para análise em tempo real.
+              </span>
+              <button
+                onClick={fetchAnalysis}
+                className="ml-auto px-3 py-1 rounded-md text-xs font-medium bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-500/30 transition flex-shrink-0"
+              >
+                Tentar reconectar
+              </button>
+            </div>
+          )}
 
           {/* Grid principal */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
