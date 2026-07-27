@@ -183,6 +183,12 @@ const Index = () => {
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm text-muted-foreground">Olá, {profile?.full_name || user?.email}</span>
               <button
+                onClick={() => navigate('/settings')}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground transition"
+              >
+                Configurações
+              </button>
+              <button
                 onClick={async () => { await signOut(); navigate('/login'); }}
                 className="px-3 py-1.5 rounded-lg text-sm font-medium bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground transition"
               >
